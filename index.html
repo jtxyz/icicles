@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Icicles</title>
+  <meta name="description" content="simulation of dripping christmas lights">
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+
+<body style="background: black; font-family: Sans-Serif; color: white;">
+  <div style="display: flex">
+    <svg width="280" height="360">
+      <g id="icicle-0">
+        <circle cx="10" cy="10" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="40" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="70" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="100" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="130" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="160" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="190" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="220" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="250" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="280" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="310" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="10" cy="340" r="8" style="fill:darkslategrey;"></circle>
+      </g>
+      <g id="icicle-1"> 
+        <circle cx="70" cy="10" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="40" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="70" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="100" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="130" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="160" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="190" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="220" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="250" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="280" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="310" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="70" cy="340" r="8" style="fill:darkslategrey;"></circle>
+      </g>
+      <g id="icicle-2">
+        <circle cx="130" cy="10" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="40" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="70" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="100" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="130" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="160" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="190" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="220" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="250" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="280" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="310" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="130" cy="340" r="8" style="fill:darkslategrey;"></circle>
+      </g>
+      <g id="icicle-3">
+        <circle cx="190" cy="10" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="40" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="70" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="100" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="130" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="160" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="190" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="220" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="250" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="280" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="310" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="190" cy="340" r="8" style="fill:darkslategrey;"></circle>
+      </g>
+      <g id="icicle-4">
+        <circle cx="250" cy="10" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="40" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="70" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="100" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="130" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="160" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="190" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="220" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="250" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="280" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="310" r="8" style="fill:darkslategrey;"></circle>
+        <circle cx="250" cy="340" r="8" style="fill:darkslategrey;"></circle>
+      </g>
+    </svg>
+    <div style="flex: right;">
+      <p>Time: <span id="time"></span> Positions: <span id="positions"></span></p>
+      <div>
+        <label>Jump: <input id="jump" type="text" /> <input type="button" onclick="jump();" value="Go" /></label>
+      </div>
+      <div>
+        <label>Auto: <input type="button" onclick="auto(true);" value="Start" /> <input type="button" onclick="auto(false);" value="Stop" /></label>
+      </div>
+      <p>Synced ranges:</p>
+      <ul>
+      </ul>
+    </div>
+  </div>
+
+
+  <script lang="javascript">
+    let time = 0;
+    
+    let synced = true;
+    let syncStart = 0;
+    let syncEnd = 0;
+    let syncedRanges = [];
+
+    const jump = () => {
+      time = parseInt(document.querySelector("#jump").value || 0);
+      synced = false;
+      syncStart = undefined;
+      syncEnd = undefined;
+      update();
+    }
+
+    let req;
+    const step = () => {
+      time++;
+      update();
+      req = window.requestAnimationFrame(step);
+    }
+
+    const auto = (start) => {
+      if (start) {
+        if (req) {
+          return;
+        }
+        req = window.requestAnimationFrame(step);
+      } else {
+        if (!req) {
+          return;
+        }
+        window.cancelAnimationFrame(req);
+        req = null;
+      }
+    }
+
+    const update = () => {
+      const positions = [0.0101, 0.0102, 0.0103, 0.0104, 0.0105]
+        .map(rate => (time * rate) % 18);
+
+      const offsets = positions.map(it => Math.floor(it));
+
+      if (offsets.every((e, i, a) => e === a[0])) {
+        if (syncedRanges.some(r => r[0] <= time && r[1] >= time)) {
+          // do nothing
+        } else {
+          if (synced) {
+            if (syncStart > time) {
+              syncStart = time;
+            } else {
+              syncEnd = time;
+            }
+          } else {
+            synced = true;
+            syncStart = time;
+            syncEnd = time;
+          }
+        }
+      } else {
+        if (synced) {
+          syncedRanges.push([syncStart, syncEnd])
+          synced = false;
+        }
+      }
+
+      offsets.forEach((offset, i) => {
+        d3.select(`#icicle-${i}`)
+          .selectAll("circle")
+          .style("fill", function(d, i) { 
+            return i < offset && i > offset - 7
+              ? 'white'
+              : 'darkslategrey'
+          });
+      });
+      
+      d3.select("ul")
+          .selectAll("li")
+          .data(syncedRanges)
+          .enter()
+          .append("li")
+          .text(function(d, i) { return `${d[0]} – ${d[1]}`; })
+          .on("click", function(e, d) { alert(d[0]) })
+
+      d3.select("#time")
+        .text(time)
+      
+      d3.select("#positions")
+        .text(positions.map(it => it.toFixed(4)).join(", "))
+    }
+
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'ArrowRight': {
+          time++;
+          update();
+          break;
+        }
+        case 'ArrowLeft': {
+          time--;
+          update();
+          break;
+        }
+      }
+    }, false);
+
+    update();
+  </script>
+
+</body>
+
+</html>
