@@ -8,7 +8,7 @@
   <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 
-<body style="background: black; font-family: Sans-Serif; color: white;">
+<body style="background: black; font-family: sans-serif; color: white;">
   <div style="display: flex">
     <svg width="280" height="360">
       <g id="icicle-0">
@@ -83,15 +83,34 @@
       </g>
     </svg>
     <div style="flex: right;">
-      <p>Time: <span id="time"></span> Positions: <span id="positions"></span></p>
+      <div>
+      <formgroup>
+        <label>Rates</label>
+        <label>1: <input id="rate-0" type="text" /></label>
+        <label>2: <input id="rate-1" type="text" /></label>
+        <label>3: <input id="rate-2" type="text" /></label>
+        <label>4: <input id="rate-3" type="text" /></label>
+        <label>5: <input id="rate-4" type="text" /></label>
+        <input type="button" onclick="setRates();" value="Set" />
+      </div>
+      <p>Time: <span id="time"></span></p>
+      <div>
+        Positions:
+        <ul style="font-family: monospace; text-align: right; list-style-type: none;" id="positions"></ul>
+      </div>
       <div>
         <label>Jump: <input id="jump" type="text" /> <input type="button" onclick="jump();" value="Go" /></label>
       </div>
       <div>
-        <label>Auto: <input type="button" onclick="auto(true);" value="Start" /> <input type="button" onclick="auto(false);" value="Stop" /></label>
+        <label>
+          Auto:
+          Speed <input id="autoSpeed" type="text" />
+          <input type="button" onclick="auto(true);" value="Start" />
+          <input type="button" onclick="auto(false);" value="Stop" />
+        </label>
       </div>
       <p>Synced ranges:</p>
-      <ul>
+      <ul id="ranges">
       </ul>
     </div>
   </div>
@@ -104,24 +123,49 @@
     let syncStart = 0;
     let syncEnd = 0;
     let syncedRanges = [];
+    let rates = [1,1.01,1.06,1.03,1.02];
+    let autoSpeed = 10;
+
+    rates.forEach((e, i) => document.querySelector(`#rate-${i}`).value = e);
+
+    const setRates = () => {
+      const newRates = rates.map((e,i) => parseFloat(document.querySelector(`#rate-${i}`).value))
+      if (newRates.some(it => isNaN(it))) {
+        return;
+      }
+
+      rates = newRates;
+      syncedRanges = [];
+      time = 0;
+      reset();
+    }
 
     const jump = () => {
       time = parseInt(document.querySelector("#jump").value || 0);
+      reset();
+    }
+
+    const reset = () => {
       synced = false;
       syncStart = undefined;
       syncEnd = undefined;
-      update();
+      render(calculatePositions());
     }
 
     let req;
     const step = () => {
-      time++;
-      update();
+      let results;
+      for (let i = 0; i<autoSpeed; i++) {
+        time++;
+        results = calculatePositions();
+      }
+      render(results);
       req = window.requestAnimationFrame(step);
     }
 
     const auto = (start) => {
       if (start) {
+        autoSpeed = parseInt(document.querySelector("#autoSpeed").value) || 10
         if (req) {
           return;
         }
@@ -135,11 +179,12 @@
       }
     }
 
-    const update = () => {
-      const positions = [0.0101, 0.0102, 0.0103, 0.0104, 0.0105]
+    const calculatePositions = () => {
+      const positions = rates
         .map(rate => (time * rate) % 18);
 
-      const offsets = positions.map(it => Math.floor(it));
+      const offsets = positions
+        .map(it => Math.floor(it));
 
       if (offsets.every((e, i, a) => e === a[0])) {
         if (syncedRanges.some(r => r[0] <= time && r[1] >= time)) {
@@ -164,47 +209,63 @@
         }
       }
 
+      return { positions, offsets };
+    }
+
+    const render = ({ positions, offsets }) => {      
+      const join = d3.select("#ranges")
+          .selectAll("li")
+          .data(syncedRanges);
+      
+      join.enter()
+          .append("li")
+          .text(function(d, i) { return `${d[0]} – ${d[1]}`; })
+          .on("click", function(e, d) { time = d[0]; reset(); })
+      
+      join.exit()
+          .remove();
+
+      d3.select("#time")
+        .text(time)
+
+      d3.select("#positions")
+        .selectAll("li")
+        .data(positions)
+        .text(d => d.toFixed(4))
+        .enter()
+        .append("li")
+        .text(d => d.toFixed(4));
+
       offsets.forEach((offset, i) => {
         d3.select(`#icicle-${i}`)
           .selectAll("circle")
-          .style("fill", function(d, i) { 
-            return i < offset && i > offset - 7
+          .style("fill", function(d, i) {
+            const start = (offset);
+            const end = (offset + 5);
+
+            return (i >= start && i <= end) || (i <= end - 18)
               ? 'white'
               : 'darkslategrey'
           });
       });
-      
-      d3.select("ul")
-          .selectAll("li")
-          .data(syncedRanges)
-          .enter()
-          .append("li")
-          .text(function(d, i) { return `${d[0]} – ${d[1]}`; })
-          .on("click", function(e, d) { alert(d[0]) })
-
-      d3.select("#time")
-        .text(time)
-      
-      d3.select("#positions")
-        .text(positions.map(it => it.toFixed(4)).join(", "))
     }
 
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
         case 'ArrowRight': {
           time++;
-          update();
+          render(calculatePositions());
           break;
         }
         case 'ArrowLeft': {
           time--;
-          update();
+          render(calculatePositions());
           break;
         }
       }
     }, false);
 
-    update();
+    render(calculatePositions());
   </script>
 
 </body>
