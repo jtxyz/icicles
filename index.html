@@ -1,273 +1,328 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Icicles</title>
+    <meta
+      name="description"
+      content="simulation of dripping christmas lights"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/bulmaswatch/darkly/bulmaswatch.min.css"
+    />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <title>Icicles</title>
-  <meta name="description" content="simulation of dripping christmas lights">
-  <script src="https://d3js.org/d3.v6.min.js"></script>
-</head>
+  <body>
+    <section class="section">
+      <div class="tile is-ancestor">
+        <div class="tile is-vertical is-8">
+          <div class="tile">
+            <div class="tile is-parent">
+              <div class="tile is-child box has-text-centered">
+                <svg
+                  class="image is-inline-block"
+                  width="270"
+                  height="360"
+                ></svg>
+              </div>
+            </div>
+            <div class="tile is-parent is-vertical">
+              <article class="tile is-child notification is-info">
+                <p class="title">Positions</p>
+                <ul
+                  style="
+                    font-family: monospace;
+                    text-align: right;
+                    list-style-type: none;
+                  "
+                  id="positions"
+                ></ul>
+              </article>
+              <article class="tile is-child notification is-warning">
+                <p class="title">Time</p>
+                <span id="time"></span>ms
+              </article>
+            </div>
+          </div>
+          <div class="tile is-parent">
+            <article class="tile is-child notification is-danger">
+              <div class="field">
+                <label class="label">Jump to time</label>
+                <div class="control">
+                  <div class="field has-addons">
+                    <div class="control">
+                      <input
+                        id="jump"
+                        class="input"
+                        type="text"
+                        placeholder="time in ms..."
+                      />
+                    </div>
+                    <div class="control">
+                      <button class="button" onclick="jump();">Go!</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-<body style="background: black; font-family: sans-serif; color: white;">
-  <div style="display: flex">
-    <svg width="280" height="360">
-      <g id="icicle-0">
-        <circle cx="10" cy="10" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="40" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="70" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="100" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="130" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="160" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="190" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="220" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="250" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="280" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="310" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="10" cy="340" r="8" style="fill:darkslategrey;"></circle>
-      </g>
-      <g id="icicle-1"> 
-        <circle cx="70" cy="10" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="40" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="70" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="100" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="130" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="160" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="190" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="220" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="250" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="280" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="310" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="70" cy="340" r="8" style="fill:darkslategrey;"></circle>
-      </g>
-      <g id="icicle-2">
-        <circle cx="130" cy="10" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="40" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="70" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="100" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="130" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="160" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="190" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="220" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="250" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="280" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="310" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="130" cy="340" r="8" style="fill:darkslategrey;"></circle>
-      </g>
-      <g id="icicle-3">
-        <circle cx="190" cy="10" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="40" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="70" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="100" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="130" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="160" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="190" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="220" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="250" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="280" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="310" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="190" cy="340" r="8" style="fill:darkslategrey;"></circle>
-      </g>
-      <g id="icicle-4">
-        <circle cx="250" cy="10" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="40" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="70" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="100" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="130" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="160" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="190" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="220" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="250" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="280" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="310" r="8" style="fill:darkslategrey;"></circle>
-        <circle cx="250" cy="340" r="8" style="fill:darkslategrey;"></circle>
-      </g>
-    </svg>
-    <div style="flex: right;">
-      <div>
-      <formgroup>
-        <label>Rates</label>
-        <label>1: <input id="rate-0" type="text" /></label>
-        <label>2: <input id="rate-1" type="text" /></label>
-        <label>3: <input id="rate-2" type="text" /></label>
-        <label>4: <input id="rate-3" type="text" /></label>
-        <label>5: <input id="rate-4" type="text" /></label>
-        <input type="button" onclick="setRates();" value="Set" />
+              <div class="field">
+                <label class="label">Start autoplay</label>
+                <div class="control">
+                  <div class="field has-addons">
+                    <div class="control">
+                      <input
+                        id="autoSpeed"
+                        class="input"
+                        type="text"
+                        placeholder="ms per frame..."
+                      />
+                    </div>
+                    <div class="control">
+                      <button class="button" onclick="auto(this);">
+                        Start
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Icicle rates in position / ms</label>
+                <div class="field is-grouped is-grouped-multiline">
+                  <p class="control">
+                    <input class="input" id="rate-0" type="text" placeholder="Auto rate..." />
+                  </p>
+                  <p class="control">
+                    <input class="input" id="rate-1" type="text" placeholder="Auto rate..." />
+                  </p>
+                  <p class="control">
+                    <input class="input" id="rate-2" type="text" placeholder="Auto rate..." />
+                  </p>
+                  <p class="control">
+                    <input class="input" id="rate-3" type="text" placeholder="Auto rate..." />
+                  </p>
+                  <p class="control">
+                    <input class="input" id="rate-4" type="text" placeholder="Auto rate..." />
+                  </p>
+                  <p class="control">
+                    <button class="button" onclick="jump();">Set</button>
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="tile is-parent">
+          <nav class="panel tile is-child is-success">
+            <p class="panel-heading">
+              Synced
+            </p>
+            <p class="panel-tabs">
+              <a class="is-active">Moments</a>
+            </p>
+            <div class="panel-block">
+              <ul id="ranges"></ul>
+            </a>
+          </nav>
+
+          <!-- <article class="tile is-child notification is-success">
+            <div class="tabs is-centered">
+              <ul>
+                <li class="is-active"><a>Synced ranges</a></li>
+              </ul>
+            </div>
+            <ul id="ranges"></ul>
+          </article> -->
+        </div>
       </div>
-      <p>Time: <span id="time"></span></p>
-      <div>
-        Positions:
-        <ul style="font-family: monospace; text-align: right; list-style-type: none;" id="positions"></ul>
-      </div>
-      <div>
-        <label>Jump: <input id="jump" type="text" /> <input type="button" onclick="jump();" value="Go" /></label>
-      </div>
-      <div>
-        <label>
-          Auto:
-          Speed <input id="autoSpeed" type="text" />
-          <input type="button" onclick="auto(true);" value="Start" />
-          <input type="button" onclick="auto(false);" value="Stop" />
-        </label>
-      </div>
-      <p>Synced ranges:</p>
-      <ul id="ranges">
-      </ul>
-    </div>
-  </div>
+    </section>
 
+    <script>
+      const initIcicles = () => {
+        d3.select("svg")
+          .selectAll("g")
+          .data(
+            Array(5)
+              .fill()
+              .map(() => Array(12).fill())
+          )
+          .enter()
+          .append("g")
+          .attr("id", (d, i) => `icicle-${i}`)
+          .selectAll("circle")
+          .data((d, i) => d.map(() => i))
+          .enter()
+          .append("circle")
+          .attr("cx", (d, i) => d * 60 + 10)
+          .attr("cy", (d, i) => i * 30 + 10)
+          .attr("style", "fill:darkslategrey;")
+          .attr("r", 8);
+      };
 
-  <script lang="javascript">
-    let time = 0;
-    
-    let synced = true;
-    let syncStart = 0;
-    let syncEnd = 0;
-    let syncedRanges = [];
-    let rates = [1,1.01,1.06,1.03,1.02];
-    let autoSpeed = 10;
+      let time = 0;
 
-    rates.forEach((e, i) => document.querySelector(`#rate-${i}`).value = e);
+      let synced = true;
+      let syncStart = 0;
+      let syncEnd = 0;
+      let syncedRanges = [];
+      let rates = [1, 1.01, 1.06, 1.03, 1.02];
+      let autoSpeed = 10;
 
-    const setRates = () => {
-      const newRates = rates.map((e,i) => parseFloat(document.querySelector(`#rate-${i}`).value))
-      if (newRates.some(it => isNaN(it))) {
-        return;
-      }
+      rates.forEach((e, i) => (document.querySelector(`#rate-${i}`).value = e));
 
-      rates = newRates;
-      syncedRanges = [];
-      time = 0;
-      reset();
-    }
-
-    const jump = () => {
-      time = parseInt(document.querySelector("#jump").value || 0);
-      reset();
-    }
-
-    const reset = () => {
-      synced = false;
-      syncStart = undefined;
-      syncEnd = undefined;
-      render(calculatePositions());
-    }
-
-    let req;
-    const step = () => {
-      let results;
-      for (let i = 0; i<autoSpeed; i++) {
-        time++;
-        results = calculatePositions();
-      }
-      render(results);
-      req = window.requestAnimationFrame(step);
-    }
-
-    const auto = (start) => {
-      if (start) {
-        autoSpeed = parseInt(document.querySelector("#autoSpeed").value) || 10
-        if (req) {
+      const setRates = () => {
+        const newRates = rates.map((e, i) =>
+          parseFloat(document.querySelector(`#rate-${i}`).value)
+        );
+        if (newRates.some((it) => isNaN(it))) {
           return;
         }
+
+        rates = newRates;
+        syncedRanges = [];
+        time = 0;
+        reset();
+      };
+
+      const jump = () => {
+        time = parseInt(document.querySelector("#jump").value || 0);
+        reset();
+      };
+
+      const reset = () => {
+        synced = false;
+        syncStart = undefined;
+        syncEnd = undefined;
+        render(calculatePositions());
+      };
+
+      let req;
+      const step = () => {
+        let results;
+        for (let i = 0; i < autoSpeed; i++) {
+          time++;
+          results = calculatePositions();
+        }
+        render(results);
         req = window.requestAnimationFrame(step);
-      } else {
-        if (!req) {
-          return;
-        }
-        window.cancelAnimationFrame(req);
-        req = null;
-      }
-    }
+      };
 
-    const calculatePositions = () => {
-      const positions = rates
-        .map(rate => (time * rate) % 18);
-
-      const offsets = positions
-        .map(it => Math.floor(it));
-
-      if (offsets.every((e, i, a) => e === a[0])) {
-        if (syncedRanges.some(r => r[0] <= time && r[1] >= time)) {
-          // do nothing
+      const auto = (element) => {
+        const input = document.querySelector("#autoSpeed");
+        if (req) {
+          input.disabled = false;
+          element.innerHTML = "Start";
+          window.cancelAnimationFrame(req);
+          req = null;
         } else {
-          if (synced) {
-            if (syncStart > time) {
-              syncStart = time;
+          autoSpeed = parseInt(input.value) || 10;
+          input.disabled = true;
+          input.value = `${autoSpeed}x`;
+          element.innerHTML = "Stop";
+          req = window.requestAnimationFrame(step);
+        }
+      };
+
+      const calculatePositions = () => {
+        const positions = rates.map((rate) => (time * rate) % 18);
+
+        const offsets = positions.map((it) => Math.floor(it));
+
+        if (offsets.every((e, i, a) => e === a[0])) {
+          if (syncedRanges.some((r) => r[0] <= time && r[1] >= time)) {
+            // do nothing
+          } else {
+            if (synced) {
+              if (syncStart > time) {
+                syncStart = time;
+              } else {
+                syncEnd = time;
+              }
             } else {
+              synced = true;
+              syncStart = time;
               syncEnd = time;
             }
-          } else {
-            synced = true;
-            syncStart = time;
-            syncEnd = time;
+          }
+        } else {
+          if (synced) {
+            syncedRanges.push([syncStart, syncEnd]);
+            synced = false;
           }
         }
-      } else {
-        if (synced) {
-          syncedRanges.push([syncStart, syncEnd])
-          synced = false;
-        }
-      }
 
-      return { positions, offsets };
-    }
+        return { positions, offsets };
+      };
 
-    const render = ({ positions, offsets }) => {      
-      const join = d3.select("#ranges")
-          .selectAll("li")
-          .data(syncedRanges);
-      
-      join.enter()
+      const render = ({ positions, offsets }) => {
+        const join = d3.select("#ranges").selectAll("li").data(syncedRanges);
+
+        join
+          .enter()
           .append("li")
-          .text(function(d, i) { return `${d[0]} – ${d[1]}`; })
-          .on("click", function(e, d) { time = d[0]; reset(); })
-      
-      join.exit()
-          .remove();
-
-      d3.select("#time")
-        .text(time)
-
-      d3.select("#positions")
-        .selectAll("li")
-        .data(positions)
-        .text(d => d.toFixed(4))
-        .enter()
-        .append("li")
-        .text(d => d.toFixed(4));
-
-      offsets.forEach((offset, i) => {
-        d3.select(`#icicle-${i}`)
-          .selectAll("circle")
-          .style("fill", function(d, i) {
-            const start = (offset);
-            const end = (offset + 5);
-
-            return (i >= start && i <= end) || (i <= end - 18)
-              ? 'white'
-              : 'darkslategrey'
+          .text(function (d, i) {
+            return `${d[0]} – ${d[1]}`;
+          })
+          .on("click", function (e, d) {
+            time = d[0];
+            reset();
           });
-      });
-    }
 
-    document.addEventListener('keydown', (event) => {
-      switch (event.key) {
-        case 'ArrowRight': {
-          time++;
-          render(calculatePositions());
-          break;
-        }
-        case 'ArrowLeft': {
-          time--;
-          render(calculatePositions());
-          break;
-        }
-      }
-    }, false);
+        join.exit().remove();
 
-    render(calculatePositions());
-  </script>
+        d3.select("#time").text(time);
 
-</body>
+        d3.select("#positions")
+          .selectAll("li")
+          .data(positions)
+          .text((d) => d.toFixed(4))
+          .enter()
+          .append("li")
+          .text((d) => d.toFixed(4));
 
+        offsets.forEach((offset, i) => {
+          d3.select(`#icicle-${i}`)
+            .selectAll("circle")
+            .style("fill", function (d, i) {
+              const start = offset;
+              const end = offset + 5;
+
+              return (i >= start && i <= end) || i <= end - 18
+                ? "white"
+                : "darkslategrey";
+            });
+        });
+      };
+
+      document.addEventListener(
+        "keydown",
+        (event) => {
+          if (event.target.nodeName.toLowerCase() === "input") {
+            return;
+          }
+
+          switch (event.key) {
+            case "ArrowRight": {
+              time++;
+              render(calculatePositions());
+              break;
+            }
+            case "ArrowLeft": {
+              time--;
+              render(calculatePositions());
+              break;
+            }
+          }
+        },
+        false
+      );
+
+      initIcicles();
+      render(calculatePositions());
+    </script>
+  </body>
 </html>
