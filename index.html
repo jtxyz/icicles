@@ -11,7 +11,7 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <link
       rel="stylesheet"
-      href="https://unpkg.com/bulmaswatch/darkly/bulmaswatch.min.css"
+      href="https://unpkg.com/bulmaswatch/cyborg/bulmaswatch.min.css"
     />
   </head>
 
@@ -48,6 +48,7 @@
             </div>
           </div>
           <div class="tile is-parent">
+
             <article class="tile is-child notification is-danger">
               <div class="field">
                 <label class="label">Jump to time</label>
@@ -90,53 +91,92 @@
               </div>
 
               <div class="field">
-                <label class="label">Icicle rates in position / ms</label>
+                <label class="label">Icicle rates (in <span style="font-family: monospace;">positions / ms</spab>)</label>
                 <div class="field is-grouped is-grouped-multiline">
                   <p class="control">
-                    <input class="input" id="rate-0" type="text" placeholder="Auto rate..." />
+                    <input
+                      class="input"
+                      id="rate-0"
+                      type="text"
+                      placeholder="Auto rate..."
+                    />
                   </p>
                   <p class="control">
-                    <input class="input" id="rate-1" type="text" placeholder="Auto rate..." />
+                    <input
+                      class="input"
+                      id="rate-1"
+                      type="text"
+                      placeholder="Auto rate..."
+                    />
                   </p>
                   <p class="control">
-                    <input class="input" id="rate-2" type="text" placeholder="Auto rate..." />
+                    <input
+                      class="input"
+                      id="rate-2"
+                      type="text"
+                      placeholder="Auto rate..."
+                    />
                   </p>
                   <p class="control">
-                    <input class="input" id="rate-3" type="text" placeholder="Auto rate..." />
+                    <input
+                      class="input"
+                      id="rate-3"
+                      type="text"
+                      placeholder="Auto rate..."
+                    />
                   </p>
                   <p class="control">
-                    <input class="input" id="rate-4" type="text" placeholder="Auto rate..." />
+                    <input
+                      class="input"
+                      id="rate-4"
+                      type="text"
+                      placeholder="Auto rate..."
+                    />
                   </p>
                   <p class="control">
                     <button class="button" onclick="setRates();">Set</button>
                   </p>
                 </div>
               </div>
+
+              <div class="field">
+                <label class="label">Presets</label>
+                <div class="field is-grouped is-grouped-multiline">
+                  <p class="control">
+                    <button class="button" onclick="activatePreset(0);">Hundredths</button>
+                  </p>
+                  <p class="control">
+                    <button class="button" onclick="activatePreset(1);">Thousandths</button>
+                  </p>
+                  <p class="control">
+                    <button class="button" onclick="activatePreset(2);">Whole numbers</button>
+                  </p>
+                  <p class="control">
+                    <button class="button" onclick="activatePreset(3);">1 point something</button>
+                  </p>
+                </div>
+              </div>
+
             </article>
           </div>
         </div>
 
         <div class="tile is-parent">
-          <nav class="panel tile is-child is-success">
-            <p class="panel-heading">
-              Synced
-            </p>
+          <nav
+            class="panel tile is-child is-success"
+            style="background-color: #363636"
+          >
+            <p class="panel-heading">Synced</p>
             <p class="panel-tabs">
               <a class="is-active">Moments</a>
             </p>
             <div class="panel-block">
-              <ul id="ranges"></ul>
-            </a>
-          </nav>
-
-          <!-- <article class="tile is-child notification is-success">
-            <div class="tabs is-centered">
-              <ul>
-                <li class="is-active"><a>Synced ranges</a></li>
-              </ul>
+              <ul
+                style="max-height: 730px; overflow: scroll; width: 100%"
+                id="ranges"
+              ></ul>
             </div>
-            <ul id="ranges"></ul>
-          </article> -->
+          </nav>
         </div>
       </div>
     </section>
@@ -170,14 +210,28 @@
       let syncEnd = 0;
       let syncedRanges = [];
       let rates = [1, 1.01, 1.06, 1.03, 1.02];
-      let autoSpeed = 10;
+      let autoSpeed = 1;      
 
-      rates.forEach((e, i) => (document.querySelector(`#rate-${i}`).value = e));
+      const activatePreset = (id) => {
+        const presets = [
+          [0.0201, 0.0202, 0.0203, 0.0204, 0.0205],
+          [0.00101, 0.00102, 0.00103, 0.00104, 0.00104],
+          [1, 2, 3, 4, 5],
+          [1.001, 1.002, 1.003, 1.004, 1.005],
+        ]
+        const preset = presets[id];
+        preset.forEach((e, i) => (document.querySelector(`#rate-${i}`).value = e));
+
+        rates = preset;
+        syncedRanges = [];
+        time = 0;
+      }
 
       const setRates = () => {
         const newRates = rates.map((e, i) =>
           parseFloat(document.querySelector(`#rate-${i}`).value)
         );
+
         if (newRates.some((it) => isNaN(it))) {
           return;
         }
@@ -203,7 +257,7 @@
       let req;
       const step = () => {
         let results;
-        for (let i = 0; i < autoSpeed; i++) {
+        for (let i = 0; i < autoSpeed * 60; i++) {
           time++;
           results = calculatePositions();
         }
@@ -229,7 +283,6 @@
 
       const calculatePositions = () => {
         const positions = rates.map((rate) => (time * rate) % 18);
-
         const offsets = positions.map((it) => Math.floor(it));
 
         if (offsets.every((e, i, a) => e === a[0])) {
@@ -321,6 +374,7 @@
         false
       );
 
+      activatePreset(0);
       initIcicles();
       render(calculatePositions());
     </script>
