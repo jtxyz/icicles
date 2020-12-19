@@ -1,43 +1,43 @@
 const keyboard = {
-	bindArrows: (callback) => {
-		document.addEventListener(
-			"keydown",
-			(event) => {
-				if (event.target.nodeName.toLowerCase() === "input") {
-					return;
-				}
+  bindArrows: (callback) => {
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.target.nodeName.toLowerCase() === "input") {
+          return;
+        }
 
-				switch (event.key) {
-					case "ArrowRight": {
-						callback(1);
-						break;
-					}
-					case "ArrowLeft": {
-						callback(-1);
-						break;
-					}
-				}
-			},
-			false
-		);
-	},
+        switch (event.key) {
+          case "ArrowRight": {
+            callback(1);
+            break;
+          }
+          case "ArrowLeft": {
+            callback(-1);
+            break;
+          }
+        }
+      },
+      false
+    );
+  },
 
-	bindSpace: (callback) => {
-		document.addEventListener(
-			"keydown",
-			(event) => {
-				if (event.target.nodeName.toLowerCase() === "input") {
-					return;
-				}
+  bindSpace: (callback) => {
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.target.nodeName.toLowerCase() === "input") {
+          return;
+        }
 
-				switch (event.key) {
-					case " ": {
-						callback();
-						break;
-					}
-				}
-			},
-			false
-		);
-	},
-}
+        switch (event.key) {
+          case " ": {
+            callback();
+            break;
+          }
+        }
+      },
+      false
+    );
+  },
+};

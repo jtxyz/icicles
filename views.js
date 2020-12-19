@@ -1,44 +1,16 @@
-const render = ({ positions, offsets, millis }) => {
-  const join = d3.select("#ranges").selectAll("li").data(syncedRanges);
+const ranges = {
+  render: ({ positions, offsets, millis }) => {
+    const join = d3.select("#ranges").selectAll("li").data(syncedRanges);
 
-  join
-    .enter()
-    .append("li")
-    .text(function (d, i) {
-      return `${d[0]} – ${d[1]}`;
-    });
+    join
+      .enter()
+      .append("li")
+      .text(function (d, i) {
+        return `${d[0]} – ${d[1]}`;
+      });
 
-  join.exit().remove();
-};
-
-const activatePreset = (id) => {
-  const presets = [
-    [0.801, 0.802, 0.803, 0.804, 0.805],
-    [0.801, 0.802, 0.803, 0.804, 0.805],
-    [0.801, 0.802, 0.803, 0.804, 0.805],
-    [0.801, 0.802, 0.803, 0.804, 0.805],
-  ];
-  const preset = presets[id];
-  preset.forEach((e, i) => (document.querySelector(`#rate-${i}`).value = e));
-
-  rates = preset;
-  syncedRanges = [];
-  time = 0;
-};
-
-const setRates = () => {
-  const newRates = rates.map((e, i) =>
-    parseFloat(document.querySelector(`#rate-${i}`).value)
-  );
-
-  if (newRates.some((it) => isNaN(it))) {
-    return;
-  }
-
-  rates = newRates;
-  syncedRanges = [];
-  time = 0;
-  reset();
+    join.exit().remove();
+  },
 };
 
 const jump = () => {

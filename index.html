@@ -49,8 +49,7 @@
           </div>
           <div class="tile is-parent">
             <article class="tile is-child notification is-danger">
-              <!--
-              <div class="field">
+              <!-- <div class="field">
                 <label class="label">Jump to time</label>
                 <div class="control">
                   <div class="field has-addons">
@@ -88,15 +87,14 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div class="field">
                 <label class="label">Icicle rates (in <span style="font-family: monospace;">positions / ms</spab>)</label>
-                <div class="field is-grouped is-grouped-multiline">
+                <div id="rates" class="field is-grouped is-grouped-multiline">
                   <p class="control">
                     <input
                       class="input"
-                      id="rate-0"
                       type="text"
                       placeholder="Auto rate..."
                     />
@@ -104,7 +102,6 @@
                   <p class="control">
                     <input
                       class="input"
-                      id="rate-1"
                       type="text"
                       placeholder="Auto rate..."
                     />
@@ -112,7 +109,6 @@
                   <p class="control">
                     <input
                       class="input"
-                      id="rate-2"
                       type="text"
                       placeholder="Auto rate..."
                     />
@@ -120,7 +116,6 @@
                   <p class="control">
                     <input
                       class="input"
-                      id="rate-3"
                       type="text"
                       placeholder="Auto rate..."
                     />
@@ -128,35 +123,33 @@
                   <p class="control">
                     <input
                       class="input"
-                      id="rate-4"
                       type="text"
                       placeholder="Auto rate..."
                     />
                   </p>
                   <p class="control">
-                    <button class="button" onclick="setRates();">Set</button>
+                    <button id="set-rates" class="button">Set</button>
                   </p>
                 </div>
               </div>
 
               <div class="field">
                 <label class="label">Presets</label>
-                <div class="field is-grouped is-grouped-multiline">
+                <div id="presets" class="field is-grouped is-grouped-multiline">
                   <p class="control">
-                    <button class="button" onclick="activatePreset(0);">Hundredths</button>
+                    <button class="button"></button>
                   </p>
                   <p class="control">
-                    <button class="button" onclick="activatePreset(1);">Thousandths</button>
+                    <button class="button"></button>
                   </p>
                   <p class="control">
-                    <button class="button" onclick="activatePreset(2);">Whole numbers</button>
+                    <button class="button"></button>
                   </p>
                   <p class="control">
-                    <button class="button" onclick="activatePreset(3);">1 point something</button>
+                    <button class="button"></button>
                   </p>
                 </div>
               </div> 
-              -->
             </article>
           </div>
         </div>
@@ -187,17 +180,16 @@
     <script src="visualisation.js"></script>
     <script src="keyboard.js"></script>
     <script src="data.js"></script>
+    <script src="rates.js"></script>
     <script>
       let positions = [0, 0, 0, 0, 0];
-      let rates = [0.016, 0.016, 0.016, 0.016, 0.016];
+      let activeRates = [0.016, 0.016, 0.016, 0.016, 0.016];
       let time = 0;
-
-      visualisation.init();
 
       let update = (change) => {
         time += change;
 
-        const { offsets, positions } = icicle.calculatePositions(rates, time);
+        const { offsets, positions } = icicle.calculatePositions(activeRates, time);
 
         visualisation.render(offsets);
         data.render(time.toFixed(2), positions);
@@ -208,10 +200,14 @@
       keyboard.bindArrows((change) => update(62.5 * change));
       keyboard.bindSpace(() => timer.toggle());
 
-      update(0);
+      const dripRates = rates.init((rates) => {
+        activeRates = rates;
+      });
+      dripRates.initialisePresets();
+      dripRates.activatePreset(0);
 
-      // activatePreset(0);
-      // let clock = model.clock(icicles.calculatePositions, render);
+      visualisation.init();
+      update(0);
     </script>
   </body>
 </html>
