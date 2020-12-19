@@ -182,17 +182,18 @@
     <script src="data.js"></script>
     <script src="rates.js"></script>
     <script>
-      let positions = [0, 0, 0, 0, 0];
-      let activeRates = [0.016, 0.016, 0.016, 0.016, 0.016];
-      let time = 0;
+      let state = {
+        activeRates: [0.016, 0.016, 0.016, 0.016, 0.016],
+        time: 0,
+      };
 
       let update = (change) => {
-        time += change;
+        state.time += change;
 
-        const { offsets, positions } = icicle.calculatePositions(activeRates, time);
+        const { offsets, positions } = icicle.calculatePositions(state.activeRates, state.time);
 
         visualisation.render(offsets);
-        data.render(time.toFixed(2), positions);
+        data.render(state.time.toFixed(2), positions);
       };
 
       const timer = clock.timer(undefined, (millis) => update(millis));
@@ -201,7 +202,7 @@
       keyboard.bindSpace(() => timer.toggle());
 
       const dripRates = rates.init((rates) => {
-        activeRates = rates;
+        state.activeRates = rates;
       });
       dripRates.initialisePresets();
       dripRates.activatePreset(0);
