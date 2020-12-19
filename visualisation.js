@@ -9,13 +9,13 @@ const visualisation = {
       )
       .enter()
       .append("g")
-      .attr("id", (d, i) => `icicle-${i}`)
+      .attr("id", (column, i) => `icicle-${i}`)
       .selectAll("circle")
-      .data((d, i) => d.map(() => i))
+      .data((column, i) => column.map(() => i))
       .enter()
       .append("circle")
-      .attr("cx", (d, i) => d * 60 + 10)
-      .attr("cy", (d, i) => i * 30 + 10)
+      .attr("cx", (column, _) => column * 60 + 10)
+      .attr("cy", (_, row) => row * 30 + 10)
       .attr("style", "fill:darkslategrey;")
       .attr("r", 8);
   },

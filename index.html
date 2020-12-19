@@ -189,26 +189,26 @@
     <script src="data.js"></script>
     <script>
       let positions = [0, 0, 0, 0, 0];
+      let rates = [0.016, 0.016, 0.016, 0.016, 0.016];
       let time = 0;
 
       visualisation.init();
-      visualisation.render(positions);
-
-      let icicles = model.icicles([0.016, 0.016, 0.016, 0.016, 0.016]);
 
       let update = (change) => {
         time += change;
 
-        const { offsets } = icicles.calculatePositions(time);
+        const { offsets, positions } = icicle.calculatePositions(rates, time);
 
         visualisation.render(offsets);
-        data.render(time.toFixed(2));
+        data.render(time.toFixed(2), positions);
       };
 
       const timer = clock.timer(undefined, (millis) => update(millis));
 
       keyboard.bindArrows((change) => update(62.5 * change));
       keyboard.bindSpace(() => timer.toggle());
+
+      update(0);
 
       // activatePreset(0);
       // let clock = model.clock(icicles.calculatePositions, render);
