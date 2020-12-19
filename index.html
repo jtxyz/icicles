@@ -43,13 +43,13 @@
               </article>
               <article class="tile is-child notification is-warning">
                 <p class="title">Time</p>
-                <span id="time"></span>ms
+                <span style="font-family: monospace;" id="time"></span>ms
               </article>
             </div>
           </div>
           <div class="tile is-parent">
-
             <article class="tile is-child notification is-danger">
+              <!--
               <div class="field">
                 <label class="label">Jump to time</label>
                 <div class="control">
@@ -155,8 +155,8 @@
                     <button class="button" onclick="activatePreset(3);">1 point something</button>
                   </p>
                 </div>
-              </div>
-
+              </div> 
+              -->
             </article>
           </div>
         </div>
@@ -181,202 +181,37 @@
       </div>
     </section>
 
+    <script src="views.js"></script>
+    <script src="icicle.js"></script>
+    <script src="clock.js"></script>
+    <script src="visualisation.js"></script>
+    <script src="keyboard.js"></script>
+    <script src="data.js"></script>
     <script>
-      const initIcicles = () => {
-        d3.select("svg")
-          .selectAll("g")
-          .data(
-            Array(5)
-              .fill()
-              .map(() => Array(12).fill())
-          )
-          .enter()
-          .append("g")
-          .attr("id", (d, i) => `icicle-${i}`)
-          .selectAll("circle")
-          .data((d, i) => d.map(() => i))
-          .enter()
-          .append("circle")
-          .attr("cx", (d, i) => d * 60 + 10)
-          .attr("cy", (d, i) => i * 30 + 10)
-          .attr("style", "fill:darkslategrey;")
-          .attr("r", 8);
-      };
-
+      let positions = [0, 0, 0, 0, 0];
       let time = 0;
 
-      let synced = true;
-      let syncStart = 0;
-      let syncEnd = 0;
-      let syncedRanges = [];
-      let rates = [1, 1.01, 1.06, 1.03, 1.02];
-      let autoSpeed = 1;      
+      visualisation.init();
+      visualisation.render(positions);
 
-      const activatePreset = (id) => {
-        const presets = [
-          [0.0201, 0.0202, 0.0203, 0.0204, 0.0205],
-          [0.00101, 0.00102, 0.00103, 0.00104, 0.00104],
-          [1, 2, 3, 4, 5],
-          [1.001, 1.002, 1.003, 1.004, 1.005],
-        ]
-        const preset = presets[id];
-        preset.forEach((e, i) => (document.querySelector(`#rate-${i}`).value = e));
+      let icicles = model.icicles([0.016, 0.016, 0.016, 0.016, 0.016]);
 
-        rates = preset;
-        syncedRanges = [];
-        time = 0;
-      }
+      let update = (change) => {
+        time += change;
 
-      const setRates = () => {
-        const newRates = rates.map((e, i) =>
-          parseFloat(document.querySelector(`#rate-${i}`).value)
-        );
+        const { offsets } = icicles.calculatePositions(time);
 
-        if (newRates.some((it) => isNaN(it))) {
-          return;
-        }
-
-        rates = newRates;
-        syncedRanges = [];
-        time = 0;
-        reset();
+        visualisation.render(offsets);
+        data.render(time.toFixed(2));
       };
 
-      const jump = () => {
-        time = parseInt(document.querySelector("#jump").value || 0);
-        reset();
-      };
+      const timer = clock.timer(undefined, (millis) => update(millis));
 
-      const reset = () => {
-        synced = false;
-        syncStart = undefined;
-        syncEnd = undefined;
-        render(calculatePositions());
-      };
+      keyboard.bindArrows((change) => update(62.5 * change));
+      keyboard.bindSpace(() => timer.toggle());
 
-      let req;
-      const step = () => {
-        let results;
-        for (let i = 0; i < autoSpeed * 60; i++) {
-          time++;
-          results = calculatePositions();
-        }
-        render(results);
-        req = window.requestAnimationFrame(step);
-      };
-
-      const auto = (element) => {
-        const input = document.querySelector("#autoSpeed");
-        if (req) {
-          input.disabled = false;
-          element.innerHTML = "Start";
-          window.cancelAnimationFrame(req);
-          req = null;
-        } else {
-          autoSpeed = parseInt(input.value) || 10;
-          input.disabled = true;
-          input.value = `${autoSpeed}x`;
-          element.innerHTML = "Stop";
-          req = window.requestAnimationFrame(step);
-        }
-      };
-
-      const calculatePositions = () => {
-        const positions = rates.map((rate) => (time * rate) % 18);
-        const offsets = positions.map((it) => Math.floor(it));
-
-        if (offsets.every((e, i, a) => e === a[0])) {
-          if (syncedRanges.some((r) => r[0] <= time && r[1] >= time)) {
-            // do nothing
-          } else {
-            if (synced) {
-              if (syncStart > time) {
-                syncStart = time;
-              } else {
-                syncEnd = time;
-              }
-            } else {
-              synced = true;
-              syncStart = time;
-              syncEnd = time;
-            }
-          }
-        } else {
-          if (synced) {
-            syncedRanges.push([syncStart, syncEnd]);
-            synced = false;
-          }
-        }
-
-        return { positions, offsets };
-      };
-
-      const render = ({ positions, offsets }) => {
-        const join = d3.select("#ranges").selectAll("li").data(syncedRanges);
-
-        join
-          .enter()
-          .append("li")
-          .text(function (d, i) {
-            return `${d[0]} – ${d[1]}`;
-          })
-          .on("click", function (e, d) {
-            time = d[0];
-            reset();
-          });
-
-        join.exit().remove();
-
-        d3.select("#time").text(time);
-
-        d3.select("#positions")
-          .selectAll("li")
-          .data(positions)
-          .text((d) => d.toFixed(4))
-          .enter()
-          .append("li")
-          .text((d) => d.toFixed(4));
-
-        offsets.forEach((offset, i) => {
-          d3.select(`#icicle-${i}`)
-            .selectAll("circle")
-            .style("fill", function (d, i) {
-              const start = offset;
-              const end = offset + 5;
-
-              return (i >= start && i <= end) || i <= end - 18
-                ? "white"
-                : "darkslategrey";
-            });
-        });
-      };
-
-      document.addEventListener(
-        "keydown",
-        (event) => {
-          if (event.target.nodeName.toLowerCase() === "input") {
-            return;
-          }
-
-          switch (event.key) {
-            case "ArrowRight": {
-              time++;
-              render(calculatePositions());
-              break;
-            }
-            case "ArrowLeft": {
-              time--;
-              render(calculatePositions());
-              break;
-            }
-          }
-        },
-        false
-      );
-
-      activatePreset(0);
-      initIcicles();
-      render(calculatePositions());
+      // activatePreset(0);
+      // let clock = model.clock(icicles.calculatePositions, render);
     </script>
   </body>
 </html>
