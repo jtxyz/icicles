@@ -5,7 +5,7 @@ const sync = {
     let syncEnd = 0;
     let syncedRanges = [];
 
-    check = ({ positions, offsets }) => {
+    const check = (time, { positions, offsets }) => {
       if (offsets.every((e, i, a) => e === a[0])) {
         if (syncedRanges.some((r) => r[0] <= time && r[1] >= time)) {
           // do nothing
@@ -30,7 +30,7 @@ const sync = {
       }
     };
 
-    const render = ({ positions, offsets, millis }) => {
+    const render = () => {
       const join = d3.select("#ranges").selectAll("li").data(syncedRanges);
 
       join

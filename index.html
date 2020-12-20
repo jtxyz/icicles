@@ -156,7 +156,6 @@
       </div>
     </section>
 
-    <script src="views.js"></script>
     <script src="icicle.js"></script>
     <script src="clock.js"></script>
     <script src="visualisation.js"></script>
@@ -173,19 +172,43 @@
       const ranges = sync.ranges();
 
       const update = (change) => {
-        state.time += change;
+        if (change >= 0) {
+          for (
+            let start = state.time + 1;
+            state.time < start + change;
+            state.time++
+          ) {
+            const { offsets, positions } = icicle.calculatePositions(
+              state.activeRates,
+              state.time
+            );
+            ranges.check(state.time, { offsets, positions });
+          }
+        } else {
+          for (
+            let start = state.time - 1;
+            state.time > start + change;
+            state.time--
+          ) {
+            const { offsets, positions } = icicle.calculatePositions(
+              state.activeRates,
+              state.time
+            );
+            ranges.check(state.time, { offsets, positions });
+          }
+        }
 
         const { offsets, positions } = icicle.calculatePositions(
           state.activeRates,
           state.time
         );
-
+        ranges.check(state.time, { offsets, positions });
         visualisation.render(offsets);
         data.render(state.time.toFixed(2), positions);
-        ranges.check(positions);
+        ranges.render();
       };
 
-      const timer = clock.timer(undefined, (millis) => update(millis));
+      const timer = clock.timer((millis) => {}, update);
       keyboard.bindSpace(() => timer.toggleAuto());
       keyboard.bindArrows((change) =>
         update((change * 1000) / icicle.cycleLength)

@@ -1,5 +1,5 @@
 const clock = {
-  timer: (eachMillisecond = () => {}, eachFrame = () => {}) => {
+  timer: (eachFrame = () => {}) => {
     let activeRequest;
     let previousTimestamp;
     let running = false;
@@ -11,12 +11,8 @@ const clock = {
 
       const elapsed = timestamp - (previousTimestamp || timestamp);
 
-      let state;
-      for (i = 0; i < elapsed * multiplier; i++) {
-        state = eachMillisecond();
-      }
-
       eachFrame(elapsed * multiplier);
+
       previousTimestamp = timestamp;
       activeRequest = window.requestAnimationFrame(step);
     };
