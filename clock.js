@@ -3,16 +3,20 @@ const clock = {
     let activeRequest;
     let previousTimestamp;
     let running = false;
+    let multiplier = 1;
 
     const step = (timestamp) => {
+      const input = document.querySelector("#auto-speed");
+      const multiplier = parseFloat(input.value) || 1;
+
       const elapsed = timestamp - (previousTimestamp || timestamp);
 
       let state;
-      for (i = 0; i < elapsed; i++) {
+      for (i = 0; i < elapsed * multiplier; i++) {
         state = eachMillisecond();
       }
 
-      eachFrame(elapsed);
+      eachFrame(elapsed * multiplier);
       previousTimestamp = timestamp;
       activeRequest = window.requestAnimationFrame(step);
     };
@@ -28,15 +32,17 @@ const clock = {
     };
 
     const toggle = () => {
-      if (running = !running) {
+      if ((running = !running)) {
         start();
       } else {
         stop();
       }
-    }
+    };
+
+    document.querySelector("#auto-play").onclick = toggle;
 
     return {
       toggle,
     };
   },
-}
+};

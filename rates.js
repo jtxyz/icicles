@@ -1,10 +1,10 @@
 const rates = {
   init: (ratesChangedCallback) => {
     const presets = [
-      { label: "1", rates: [0.016, 0.01601, 0.01602, 0.01603, 0.01604] },
-      { label: "2", rates: [0.016, 0.01602, 0.01604, 0.01606, 0.01608] },
-      { label: "3", rates: [0.016, 0.01604, 0.01608, 0.01612, 0.01616] },
-      { label: "4", rates: [0.0161, 0.0162, 0.0163, 0.0164, 0.0165] },
+      { label: "1", rates: [1.006, 1.00601, 1.00602, 1.00603, 1.00604] },
+      { label: "2", rates: [1.006, 1.00602, 1.00604, 1.00606, 1.00608] },
+      { label: "3", rates: [1.006, 1.00604, 1.00608, 1.00612, 1.00616] },
+      { label: "4", rates: [1.0061, 1.0062, 1.0063, 1.0064, 1.0065] },
     ];
 
     const activatePreset = (id) => {
@@ -17,7 +17,7 @@ const rates = {
           input.value = preset[i];
         });
 
-      return preset;
+      ratesChangedCallback(preset);
     };
 
     const initialisePresets = () => {

@@ -43,19 +43,18 @@
               </article>
               <article class="tile is-child notification is-warning">
                 <p class="title">Time</p>
-                <span style="font-family: monospace;" id="time"></span>ms
+                <span style="font-family: monospace" id="time"></span>ms
               </article>
             </div>
           </div>
           <div class="tile is-parent">
             <article class="tile is-child notification is-danger">
-              <!-- <div class="field">
+              <div class="field">
                 <label class="label">Jump to time</label>
-                <div class="control">
+                <div class="control" id="jump">
                   <div class="field has-addons">
                     <div class="control">
                       <input
-                        id="jump"
                         class="input"
                         type="text"
                         placeholder="time in ms..."
@@ -74,58 +73,41 @@
                   <div class="field has-addons">
                     <div class="control">
                       <input
-                        id="autoSpeed"
+                        id="auto-speed"
                         class="input"
                         type="text"
-                        placeholder="ms per frame..."
+                        placeholder="speed multiplier..."
                       />
                     </div>
                     <div class="control">
-                      <button class="button" onclick="auto(this);">
-                        Start
+                      <button class="button" id="auto-play">
+                        Start / Stop
                       </button>
                     </div>
                   </div>
                 </div>
-              </div> -->
+              </div>
 
               <div class="field">
-                <label class="label">Icicle rates (in <span style="font-family: monospace;">positions / ms</spab>)</label>
+                <label class="label">
+                  Icicle rates (in
+                  <span style="font-family: monospace">cycles / s</span>)
+                </label>
                 <div id="rates" class="field is-grouped is-grouped-multiline">
                   <p class="control">
-                    <input
-                      class="input"
-                      type="text"
-                      placeholder="Auto rate..."
-                    />
+                    <input class="input" type="text" />
                   </p>
                   <p class="control">
-                    <input
-                      class="input"
-                      type="text"
-                      placeholder="Auto rate..."
-                    />
+                    <input class="input" type="text" />
                   </p>
                   <p class="control">
-                    <input
-                      class="input"
-                      type="text"
-                      placeholder="Auto rate..."
-                    />
+                    <input class="input" type="text" />
                   </p>
                   <p class="control">
-                    <input
-                      class="input"
-                      type="text"
-                      placeholder="Auto rate..."
-                    />
+                    <input class="input" type="text" />
                   </p>
                   <p class="control">
-                    <input
-                      class="input"
-                      type="text"
-                      placeholder="Auto rate..."
-                    />
+                    <input class="input" type="text" />
                   </p>
                   <p class="control">
                     <button id="set-rates" class="button">Set</button>
@@ -149,7 +131,7 @@
                     <button class="button"></button>
                   </p>
                 </div>
-              </div> 
+              </div>
             </article>
           </div>
         </div>
@@ -181,33 +163,47 @@
     <script src="keyboard.js"></script>
     <script src="data.js"></script>
     <script src="rates.js"></script>
+    <script src="sync.js"></script>
     <script>
       let state = {
-        activeRates: [0.016, 0.016, 0.016, 0.016, 0.016],
+        activeRates: [0, 0, 0, 0, 0],
         time: 0,
       };
 
-      let update = (change) => {
+      const ranges = sync.ranges();
+
+      const update = (change) => {
         state.time += change;
 
-        const { offsets, positions } = icicle.calculatePositions(state.activeRates, state.time);
+        const { offsets, positions } = icicle.calculatePositions(
+          state.activeRates,
+          state.time
+        );
 
         visualisation.render(offsets);
         data.render(state.time.toFixed(2), positions);
+        ranges.check(positions);
       };
 
       const timer = clock.timer(undefined, (millis) => update(millis));
-
-      keyboard.bindArrows((change) => update(62.5 * change));
-      keyboard.bindSpace(() => timer.toggle());
+      keyboard.bindSpace(() => timer.toggleAuto());
+      keyboard.bindArrows((change) =>
+        update((change * 1000) / icicle.cycleLength)
+      );
 
       const dripRates = rates.init((rates) => {
         state.activeRates = rates;
+        update(0);
       });
-      dripRates.initialisePresets();
-      dripRates.activatePreset(0);
+
+      document.querySelector("#jump button").onclick = () => {
+        state.time = parseInt(document.querySelector("#jump input").value || 0);
+        update(0);
+      };
 
       visualisation.init();
+      dripRates.initialisePresets();
+      dripRates.activatePreset(0);
       update(0);
     </script>
   </body>

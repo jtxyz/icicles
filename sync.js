@@ -29,5 +29,23 @@ const sync = {
         }
       }
     };
+
+    const render = ({ positions, offsets, millis }) => {
+      const join = d3.select("#ranges").selectAll("li").data(syncedRanges);
+
+      join
+        .enter()
+        .append("li")
+        .text(function (d, i) {
+          return `${d[0]} – ${d[1]}`;
+        });
+
+      join.exit().remove();
+    };
+
+    return {
+      check,
+      render,
+    };
   },
 };
